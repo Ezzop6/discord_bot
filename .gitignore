@@ -12,6 +12,10 @@ venv/
 # environment files
 .env
 docker-compose.override.yml
+
 # cache files
 **/__pycache__
 **tempCodeRunnerFile.py
+
+# logs
+logs/
