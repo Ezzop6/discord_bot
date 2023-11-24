@@ -2,4 +2,4 @@ from .bot import Bot
 
 
 def create_app():
-    return 'OK'
+    Bot().run_bot()
