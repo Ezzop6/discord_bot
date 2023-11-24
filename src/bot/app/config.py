@@ -2,22 +2,19 @@ from dataclasses import dataclass
 import os
 
 
-from dotenv import load_dotenv
-load_dotenv()
-
 PRIVATE_MESSAGE_PREFIX = [
     '?', '!',
 ]
 ANSWER_WORDS = [
     'marwe',
     'trubko',
+    'trubka',
 ]
 
 
 @dataclass
 class AppConfig:
-    debug = os.getenv("DEBUG", "False") == "True"
-    open_api_key = os.getenv("OPEN_API_KEY", "")
+    DEBUG = os.getenv("DEBUG", "False") == "True"
 
 
 @dataclass

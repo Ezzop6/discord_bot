@@ -1,5 +1,5 @@
 from .bot import Bot
 
 
-def create_app():
+def create_bot():
     Bot().run_bot()

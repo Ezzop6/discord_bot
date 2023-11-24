@@ -50,6 +50,9 @@ class Logger:
             self.set_logger()
         self.log.log(level, msg)
 
+    def check_if_log_exists(self) -> bool:
+        return os.path.exists(self.log_path)
+
     def get_today(self) -> str:
         return datetime.now().strftime("%Y_%m_%d")
 

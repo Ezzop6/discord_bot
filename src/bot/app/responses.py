@@ -2,15 +2,18 @@ from discord.message import Message
 import random
 
 from .config import ANSWER_WORDS, PRIVATE_MESSAGE_PREFIX
+from services.gpt_interface import GPTInterface
 
 
 class MessageHandler:
     def __init__(self):
-        self.interface = None
+        self.interface = GPTInterface()
         self.commands = {
             'hello': self.hello,
             'roll': self.roll,
             'help': self.help,
+            'what': self.what,
+            'marvine': self.answer,
         }
 
     def make_response(self, message: Message):
@@ -26,9 +29,9 @@ class MessageHandler:
         if message.split(' ')[0] in self.commands.keys():
             return self.commands[message.split(' ')[0]]()
 
-        for word in ANSWER_WORDS:
-            if word in message:
-                return f'You said {word}'
+        # for word in ANSWER_WORDS:
+        #     if word in message:
+        #         return f'You said {word}'
 
     def hello(self):
         user = self.message.author
@@ -41,6 +44,12 @@ class MessageHandler:
             return str(random. randint(1, int(message[1])))
 
         return str(random. randint(1, 6))
+
+    def answer(self):
+        return self.interface.testing_prompt(self.message.content)
+
+    def what(self):
+        return "What?"
 
     def help(self):
         return "This is a help message that you can modify."
