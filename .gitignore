@@ -1,0 +1,17 @@
+# venv files
+venv/
+
+# IDE / editor config
+.vscode/
+.idea
+*.sw[op]
+
+# mypy files
+.mypy_cache/
+
+# environment files
+.env
+docker-compose.override.yml
+# cache files
+**/__pycache__
+**tempCodeRunnerFile.py
