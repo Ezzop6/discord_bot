@@ -2,7 +2,7 @@ import logging
 import os
 from datetime import datetime
 
-from project_paths import ProjectFolders
+from .project_paths import ProjectFolders
 
 
 class Logger:
