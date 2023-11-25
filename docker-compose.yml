@@ -15,6 +15,8 @@ services:
         ports:
             - "${HOST_DEV_PORT_BOT}:80"
         command: python main.py
+        networks:
+            - internal
     api:
         build:
             context: .
@@ -31,3 +33,7 @@ services:
             - "${HOST_DEV_PORT_API}:5000"
         restart: always
         command: python main.py
+        networks:
+            - internal
+networks:
+    internal:

@@ -14,7 +14,7 @@ class Config:
 
 
 ApiConfig = dict(
-    title="AI Link builder demo",
+    title="Marvin Home Assistant API",
     docs_path='/docs',
     spec_path='/docs/openapi.json',
 )

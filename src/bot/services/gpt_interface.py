@@ -1,3 +1,5 @@
+from openai import AsyncOpenAI
+import openai
 import json
 from dataclasses import asdict
 from pathlib import Path
@@ -14,8 +16,9 @@ from .schemas.gpt_schemas import (
 from .gpt_prompt_shortener import GPTPromptShortener
 from .logger import logger
 from .services_config import services_config as config
+
 from .project_paths import ProjectFolders
-chat_content = ''
+chat_content = None
 
 
 class GPTInterface:
@@ -68,7 +71,33 @@ class GPTInterface:
             raise Exception(f"Prompt {prompt_name} not found!")
 
         base_prompt = base_prompt.replace(f"<{prompt_name}>", prompt_content)
-        await logger.log_message(logging.INFO, f"Sending prompt: {base_prompt}")
-        await logger.log_message(logging.INFO, f"folder: {ProjectFolders.root}")
         response = await self.send_request_to_gpt(base_prompt)
         return response
+
+    async def get_chat_response(self, message: str) -> str:
+        global chat_content
+        if not chat_content:
+            chat_content = []
+            base_prompt = self.prompts.get("question", None)
+            if not base_prompt:
+                raise Exception(f"Prompt chat not found!")
+            chat_content.append({"role": "system", "content": base_prompt})
+        chat_content.append({"role": "user", "content": message})
+        client = AsyncOpenAI(api_key=config.OPEN_AI_API_KEY)
+        response = await client.chat.completions.create(
+            model="gpt-3.5-turbo-1106",
+            messages=chat_content,
+            temperature=0.6,
+            top_p=0.4,
+            presence_penalty=0.6,
+        )
+        bot_response = response.choices[0].message.content
+        await logger.log_message(logging.INFO, f"User message: {message}")
+        await logger.log_message(logging.INFO, f"Chat response: {bot_response}")
+        chat_content.append({"role": "assistant", "content": bot_response})
+
+        return bot_response if bot_response else "Sorry, something went wrong!"
+
+    def lost_memory(self):
+        global chat_content
+        chat_content = []

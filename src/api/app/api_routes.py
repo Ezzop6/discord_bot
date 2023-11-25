@@ -13,14 +13,25 @@ from .schemas.api_schema import (
 )
 
 
-@app.get("/status")
+@app.get("/api-status")
 @app.output(HealthStatus.Schema)  # type: ignore
 @app.doc(
     responses=[200],
     summary="Get status of the service",
     tags=["Health"],
 )
-def status():
+def app_status():
+    return HealthStatus()
+
+
+@app.get("/bot-status")
+@app.output(HealthStatus.Schema)  # type: ignore
+@app.doc(
+    responses=[200],
+    summary="Get status of the bot",
+    tags=["Health"],
+)
+def bot_status():
     return HealthStatus()
 
 

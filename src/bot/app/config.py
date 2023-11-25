@@ -1,11 +1,8 @@
 from dataclasses import dataclass
 import os
 
-BOT_NAME = 'marvine'
 
-PRIVATE_MESSAGE_PREFIX = [
-    '?', '!',
-]
+PRIVATE_MESSAGE_PREFIX = ['?', '!',]
 ANSWER_WORDS = [
     'marwe',
     'trubko',
