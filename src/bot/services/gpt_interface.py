@@ -14,7 +14,7 @@ from .schemas.gpt_schemas import (
 from .gpt_prompt_shortener import GPTPromptShortener
 from .logger import logger
 from .services_config import services_config as config
-
+from .project_paths import ProjectFolders
 chat_content = ''
 
 
@@ -69,5 +69,6 @@ class GPTInterface:
 
         base_prompt = base_prompt.replace(f"<{prompt_name}>", prompt_content)
         await logger.log_message(logging.INFO, f"Sending prompt: {base_prompt}")
+        await logger.log_message(logging.INFO, f"folder: {ProjectFolders.root}")
         response = await self.send_request_to_gpt(base_prompt)
         return response

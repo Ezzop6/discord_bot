@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 import os
-from .logger import logger
-import logging
 
 
 @dataclass

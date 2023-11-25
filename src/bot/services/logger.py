@@ -50,6 +50,15 @@ class Logger:
         loop = asyncio.get_event_loop()
         await loop.run_in_executor(None, self.log.log, level, msg)
 
+    def log_sync_message(self, level: int, msg: str):
+        """
+        Synchronously logs a message with the given level.
+        """
+        if self.today != self.get_today():
+            self.check_folder()
+            self.set_logger()
+        self.log.log(level, msg)
+
     def check_if_log_exists(self) -> bool:
         return os.path.exists(self.log_path)
 
