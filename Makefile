@@ -35,3 +35,6 @@ clean-venv:
 	@echo "Cleaning up"
 	@rm -rf venv
 	@echo "Cleaned up"
+
+clean-docker:
+	@docker-compose down --rmi all --volumes --remove-orphans

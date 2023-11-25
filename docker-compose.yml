@@ -29,5 +29,5 @@ services:
             - PGID=1000
         ports:
             - "${HOST_DEV_PORT_API}:5000"
-        restart: unless-stopped
+        restart: always
         command: python main.py

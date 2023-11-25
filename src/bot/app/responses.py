@@ -1,7 +1,7 @@
 from discord.message import Message
 import random
 
-from .config import ANSWER_WORDS, PRIVATE_MESSAGE_PREFIX
+from .config import ANSWER_WORDS, PRIVATE_MESSAGE_PREFIX,BOT_NAME
 from services.gpt_interface import GPTInterface
 
 
@@ -13,7 +13,7 @@ class MessageHandler:
             'roll': self.roll,
             'help': self.help,
             'what': self.what,
-            'marvine': self.answer,
+            f'{BOT_NAME}': self.answer,
         }
 
     def make_response(self, message: Message):

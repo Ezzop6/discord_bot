@@ -4,6 +4,7 @@ venv/
 # IDE / editor config
 .vscode/
 .idea
+.VSCodeCounter
 *.sw[op]
 
 # mypy files
@@ -20,4 +21,5 @@ docker-compose.override.yml
 # logs
 logs/
 
+# temporary files
 /tmp

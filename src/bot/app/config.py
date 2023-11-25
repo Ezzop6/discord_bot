@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import os
 
+BOT_NAME = 'marvine'
 
 PRIVATE_MESSAGE_PREFIX = [
     '?', '!',
