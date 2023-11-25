@@ -2,11 +2,7 @@ import json
 from dataclasses import asdict
 from pathlib import Path
 import logging
-
-from .connection import HTTPSConnectionClient
-from .services_config import services_config as config
-from .gpt_prompt_shortener import GPTPromptShortener
-from .logger import logger
+import aiohttp
 
 from .schemas.gpt_schemas import (
     GPTModel,
@@ -15,6 +11,9 @@ from .schemas.gpt_schemas import (
     GPTMessage,
     GPTResponseSchema,
 )
+from .gpt_prompt_shortener import GPTPromptShortener
+from .logger import logger
+from .services_config import services_config as config
 
 
 class GPTInterface:
@@ -24,7 +23,7 @@ class GPTInterface:
         self.prompt_shortener = GPTPromptShortener()
         self.load_prompts()
 
-        self.api_endpoint = "/v1/chat/completions"
+        self.api_endpoint = "https://api.openai.com/v1/chat/completions"  # Upravil jsem endpoint, aby obsahoval celou URL
         self.headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {config.OPEN_AI_API_KEY}"
@@ -41,10 +40,7 @@ class GPTInterface:
         request = self.prompt_shortener.shorten_prompt(request)
         return request
 
-    def send_request_to_gpt(self, base_prompt: str) -> GPTMessage:
-        """
-        Sends a request to the OpenAI API and returns the response.
-        """
+    async def send_request_to_gpt(self, base_prompt: str) -> GPTMessage:
         request_body = GPTTurboJson(
             messages=[Message(content=f"{base_prompt}")]
         )
@@ -52,20 +48,24 @@ class GPTInterface:
 
         request = json.dumps(asdict(request_body))
 
-        with HTTPSConnectionClient("api.openai.com") as conn:
+        async with aiohttp.ClientSession() as session:
             try:
-                conn.request("POST", self.api_endpoint, request, self.headers)
-                response = conn.getresponse()
-                data = response.read().decode("utf-8")
-                data = json.loads(data)
-                gpt_response = GPTResponseSchema.load(data)
-                logger.log_message(logging.INFO, f"Response: {gpt_response}")
-                return gpt_response.get_message()
+                async with session.post(self.api_endpoint, data=request, headers=self.headers) as response:
+                    data = await response.text()
+                    data = json.loads(data)
+                    gpt_response = GPTResponseSchema.load(data)
+                    return gpt_response.get_message()
             except Exception as e:
+                await logger.log_message(logging.ERROR, f"Error: {e}")
                 return GPTMessage()
 
-    def testing_prompt(self, prompt_content: str):
-        base_prompt = self.prompts.get("question", "")
-        base_prompt = base_prompt.replace("<question>", prompt_content)
-        response = self.send_request_to_gpt(base_prompt)
+    async def answer(self, prompt_content: str, prompt_name: str) -> GPTMessage:
+        base_prompt = self.prompts.get(prompt_name, None)
+
+        if not base_prompt:
+            raise Exception(f"Prompt {prompt_name} not found!")
+
+        base_prompt = base_prompt.replace(f"<{prompt_name}>", prompt_content)
+        await logger.log_message(logging.INFO, f"Sending prompt: {base_prompt}")
+        response = await self.send_request_to_gpt(base_prompt)
         return response

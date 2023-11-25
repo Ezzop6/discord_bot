@@ -4,7 +4,7 @@ interface = GPTInterface()
 
 
 def make_response(message):
-    return interface.testing_prompt(message)
+    return interface.answer(message)
 
 
 prompt = ' kolik je hodin a rekni vtip'

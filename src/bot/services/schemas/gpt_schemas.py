@@ -62,7 +62,7 @@ class GPTResponse:
 
     def get_message(self):
         message = self.choices[0].message.content
-        return message[1:-1]
+        return message
 
 
 GPTResponseSchema = class_schema(GPTResponse)()

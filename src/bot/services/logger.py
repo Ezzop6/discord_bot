@@ -1,6 +1,7 @@
 import logging
 import os
 from datetime import datetime
+import asyncio
 
 from .project_paths import ProjectFolders
 
@@ -39,16 +40,15 @@ class Logger:
         log_file = f"Marvin_{today}.log"
         self.log_path = log_folder / log_file
 
-    def log_message(self, level: int, msg: str):
+    async def log_message(self, level: int, msg: str):
         """
-        Logs a message with the given level.
-        :param level: logging enum level
-        :param msg: The message to log
+        Asynchronously logs a message with the given level.
         """
         if self.today != self.get_today():
             self.check_folder()
             self.set_logger()
-        self.log.log(level, msg)
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(None, self.log.log, level, msg)
 
     def check_if_log_exists(self) -> bool:
         return os.path.exists(self.log_path)
