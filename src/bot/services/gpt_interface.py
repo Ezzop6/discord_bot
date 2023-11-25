@@ -15,6 +15,8 @@ from .gpt_prompt_shortener import GPTPromptShortener
 from .logger import logger
 from .services_config import services_config as config
 
+chat_content = ''
+
 
 class GPTInterface:
     def __init__(self) -> None:

@@ -12,12 +12,16 @@ class GPTPromptShortener:
         gpt_request = self.get_shorten_prompt(gpt_request)
         return gpt_request
 
-    def get_shorten_prompt(self, request: GPTModel) -> GPTModel:
+    def get_shorten_prompt(self, request: GPTModel, from_end: bool = True) -> GPTModel:
         message = request.messages[0]
         tokens = self.encode_tokens(message.content, request.model)
 
         if len(tokens) > self.token_limit:
-            tokens = tokens[: self.token_limit - 150]
+            if from_end:
+                tokens = tokens[: self.token_limit - 150]
+            else:
+                token_count = len(tokens)
+                tokens = tokens[abs(self.token_limit - token_count) + 150:]
         message.content = self.decode_tokens(tokens, request.model)
         request.messages[0] = message
         return request
