@@ -24,3 +24,5 @@ class BotConfig:
     name: str = os.getenv("DISCORD_BOT_NAME", "")
     TOKEN: str = os.getenv("DISCORD_BOT_TOKEN", "")
     permission: str = os.getenv("DISCORD_BOT_PERMISSION", "")
+    BOT_ID: int = int(os.getenv("BOT_ID", ""))
+    OWNER_ID: int = int(os.getenv("OWNER_ID", ""))

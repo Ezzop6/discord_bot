@@ -1,10 +1,9 @@
-import threading
-from http.server import BaseHTTPRequestHandler, HTTPServer
 import tracemalloc
 import logging
 from discord.message import Message
 from discord.client import Client
 import discord
+
 from services.logger import logger
 from .config import BotConfig as BOT_CFG
 from .config import PRIVATE_MESSAGE_PREFIX
@@ -12,11 +11,12 @@ from .responses import MessageHandler
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
 
 tracemalloc.start()
 
 
-class Bot:
+class DiscordBot:
     def __init__(self) -> None:
         self.client = Client(intents=intents)
         self.message_handler = MessageHandler()
@@ -36,7 +36,8 @@ class Bot:
     def register_events(self):
         @self.client.event
         async def on_ready():
-            await self.handle_app_debug_mode(f' {BOT_CFG.name} is now running!')
+            # await self.send_message_to_user(BOT_CFG.BOT_ID, f'{BOT_CFG.name} is now running!')
+            await self.send_message_to_user(BOT_CFG.OWNER_ID, f'{BOT_CFG.name} is now running!')
 
         @self.client.event
         async def on_message(message: Message):
@@ -57,6 +58,16 @@ class Bot:
             except Exception as e:
                 await logger.log_message(logging.ERROR, f"Error: {e}")
                 return
+
+    async def send_message_to_user(self, user_id: int, message: str):
+        try:
+            user = await self.client.fetch_user(user_id)
+            if user:
+                await user.send(message)
+            else:
+                await logger.log_message(logging.INFO, f"User {user_id} not found")
+        except Exception as e:
+            await logger.log_message(logging.ERROR, f"Error sending message to user {user_id}: {e}")
 
     def check_if_is_private_message(self, message) -> bool:
         user_message = str(message.content)

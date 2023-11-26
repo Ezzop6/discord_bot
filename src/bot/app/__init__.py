@@ -1,4 +1,4 @@
-from .bot import Bot
+from .bot import DiscordBot
 from .http_server import DiscordHTTPServer
 from .config import AppConfig
 import threading
@@ -13,4 +13,4 @@ def run_http_server():
 
 def create_bot():
     run_http_server()
-    Bot().run_bot()
+    DiscordBot().run_bot()
