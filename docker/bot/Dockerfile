@@ -1,9 +1,7 @@
 # syntax = docker/dockerfile:experimental
 FROM python:3.11-alpine
 
-RUN apk --no-cache add nano
-
-
+RUN pip install --upgrade pip
 RUN apk --no-cache add nano
 
 WORKDIR /code

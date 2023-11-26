@@ -35,6 +35,24 @@ services:
         command: python main.py
         networks:
             - discord_bot_network
+    home_controller:
+        build:
+            context: .
+            dockerfile: ./docker/home_controller/Dockerfile
+        volumes:
+            - ./src/home_controller:/code
+            - ./logs:/logs
+        env_file:
+            - .env
+        environment:
+            - PUID=1000
+            - PGID=1000
+        ports:
+            - "${HOST_DEV_PORT_HOME_CONTROLLER}:6000"
+        restart: always
+        command: python main.py
+        networks:
+            - discord_bot_network
 networks:
     discord_bot_network:
         external:
