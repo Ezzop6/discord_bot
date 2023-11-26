@@ -1,16 +1,15 @@
 from app import app
-from flask import request, make_response, abort
-from app.validator import private_api_route, validate_token
-
-from werkzeug.exceptions import (
-    Unauthorized,
-)
-
+from app.validator import validate_token
+from app.bot_connection import BotConnection
 from .schemas.api_schema import (
     HealthStatus,
     LoginInput,
     LoginResponse,
 )
+from werkzeug.exceptions import (
+    Unauthorized,
+)
+bot_connection = BotConnection()
 
 
 @app.get("/status")
@@ -22,6 +21,18 @@ from .schemas.api_schema import (
 )
 def app_status():
     return HealthStatus(status="Hello From API")
+
+
+@app.get("/bot-status")
+@app.output(HealthStatus.Schema)  # type: ignore
+@app.doc(
+    responses=[200],
+    summary="Get status of the bot",
+    tags=["Health"],
+)
+def bot_status():
+    bot_status = bot_connection.get_bot_status()
+    return HealthStatus(status=bot_status)
 
 
 @app.post("/login")
