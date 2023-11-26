@@ -40,6 +40,10 @@ def app_status():
 )
 def bot_status():
     bot_status = bot_connection.get_bot_status()
+    origin = request.headers.get('Origin')
+    logger.log_sync_message(logging.INFO, f'Current origin: {origin} and allowed origins: {Config.ALLOWED_ORIGINS}')
+    request_data = request.get_json()
+    logger.log_sync_message(logging.INFO, f'Current request data: {request_data}')
     return HealthStatus(status=bot_status)
 
 
@@ -74,13 +78,14 @@ def login(login_input: LoginInput):
 @app.after_request
 def after_request_func(response):
     origin = request.headers.get('Origin')
+    if origin is None:
+        origin = '*'
 
-    if request.method == 'OPTIONS':
+    if request.method == 'GET':
         response = make_response()
         response.headers.add('Access-Control-Allow-Credentials', 'true')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-
         if origin in Config.ALLOWED_ORIGINS:
             response.headers.add('Access-Control-Allow-Origin', origin)
 
@@ -89,5 +94,5 @@ def after_request_func(response):
 
         if origin in Config.ALLOWED_ORIGINS:
             response.headers.add('Access-Control-Allow-Origin', origin)
-
+    logger.log_sync_message(logging.INFO, f'Current origin: {origin} and allowed origins: {Config.ALLOWED_ORIGINS}')
     return response

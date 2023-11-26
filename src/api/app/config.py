@@ -7,8 +7,11 @@ class Config:
 
     if 'localhost' in ALLOWED_ORIGINS:
         ALLOWED_ORIGINS.append(f'http://localhost:{external_port}')
+        ALLOWED_ORIGINS.append('172.23.0.1')
+        ALLOWED_ORIGINS.append('http://localhost:8001')
 
-    DEBUG: bool = os.getenv("DEBUG") == "True"
+    # DEBUG: bool = os.getenv("DEBUG") == "True"
+    DEBUG: bool = False
     internal_port: int = 5000
     external_port: int = int(os.getenv("HOST_DEV_PORT_API", ""))
     TOKEN: str = os.getenv("API_SECRET_KEY", '')

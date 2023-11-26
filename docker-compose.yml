@@ -48,11 +48,26 @@ services:
             - PUID=1000
             - PGID=1000
         ports:
-            - "${HOST_DEV_PORT_HOME_CONTROLLER}:6000"
+            - "${HOST_DEV_PORT_HOME_CONTROLLER}:8080"
         restart: always
         command: python main.py
         networks:
             - discord_bot_network
+    # xiaomi_token_extractor:
+    #     image: techblog/xiaomi_token_extractor:latest
+    #     container_name: xiaomi_token_extractor
+    #     restart: always
+    #     labels:
+    #         - "com.ouroboros.enable=true"
+    #     env_file:
+    #         - .env
+    #     environment:
+    #         - PUID=1000
+    #         - PGID=1000
+    #         - XIA_SRV= #Optional: ["cn", "de", "us", "ru", "tw", "sg", "in", "i2"]
+    #     ports:
+    #         - "${HOTS_DEV_XIAOMI_TOKEN_EXTRACTOR}:8080"
+
 networks:
     discord_bot_network:
         external:
