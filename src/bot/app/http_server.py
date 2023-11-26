@@ -1,16 +1,20 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+from .bot import DiscordBot
+bot_instance = DiscordBot()
 
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/status':
-            # Handle GET request
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             response = json.dumps({'message': 'Hello From Discord Bot'}).encode()
             self.wfile.write(response)
+        elif self.path == '/send-message':
+            # Handle GET request
+            pass
         else:
             self.send_response(404)
             self.end_headers()
@@ -18,18 +22,38 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(response)
 
     def do_POST(self):
-        # Handle POST request
-        content_length = int(self.headers['Content-Length'])
-        post_data = self.rfile.read(content_length)
-        data = json.loads(post_data)
+        if self.path == '/status':
+            # Handle POST request
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            data = json.loads(post_data)
 
-        # Do something with the data
+            # Do something with the data
 
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
-        response = json.dumps({'status': 'Hello From Discord Bot'}).encode()
-        self.wfile.write(response)
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            response = json.dumps({'status': 'Hello From Discord Bot'}).encode()
+            self.wfile.write(response)
+        elif self.path == '/send-message':
+            # Handle POST request
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+            data = json.loads(post_data)
+
+            # Do something with the data
+            bot_instance.message_queue.put(data)
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            response = json.dumps({'status': 'Message added to queue'}).encode()
+            self.wfile.write(response)
+
+        else:
+            self.send_response(404)
+            self.end_headers()
+            response = json.dumps({'message': 'Page Not Found'}).encode()
+            self.wfile.write(response)
 
 
 class DiscordHTTPServer:

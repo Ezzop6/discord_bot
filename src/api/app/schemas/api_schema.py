@@ -15,3 +15,8 @@ class LoginInput:
 class LoginResponse:
     status: int = 200
     message: str = "Success login"
+
+
+@dataclass
+class Message:
+    message: str

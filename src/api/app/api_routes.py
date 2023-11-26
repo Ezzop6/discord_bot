@@ -1,10 +1,15 @@
+from flask import request, make_response
 from app import app
-from app.validator import validate_token
+from app.validator import validate_token, private_api_route
+
 from app.bot_connection import BotConnection
+from app.config import ALLOWED_ORIGINS
+
 from .schemas.api_schema import (
     HealthStatus,
     LoginInput,
     LoginResponse,
+    Message,
 )
 from werkzeug.exceptions import (
     Unauthorized,
@@ -29,10 +34,26 @@ def app_status():
     responses=[200],
     summary="Get status of the bot",
     tags=["Health"],
+
 )
 def bot_status():
     bot_status = bot_connection.get_bot_status()
     return HealthStatus(status=bot_status)
+
+
+@app.post("/send-message-to-bot")
+@private_api_route
+@app.input(Message.Schema)  # type: ignore
+@app.output(str)  # type: ignore
+@app.doc(
+    responses=[200],
+    summary="Send message to the bot",
+    security='ApiKeyAuth',
+    tags=["AUTH"],
+)
+def send_message_to_bot(message: Message):
+    bot_connection.send_message_to_bot(message.message)
+    return f'Message sent to bot: {message.message}'
 
 
 @app.post("/login")
@@ -47,3 +68,25 @@ def login(login_input: LoginInput):
     if not validate_token(login_input.token):
         raise Unauthorized('Invalid token given')
     return LoginResponse()
+
+
+@app.after_request
+def after_request_func(response):
+    origin = request.headers.get('Origin')
+
+    if request.method == 'OPTIONS':
+        response = make_response()
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
+
+        if origin in ALLOWED_ORIGINS:
+            response.headers.add('Access-Control-Allow-Origin', origin)
+
+    else:
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+
+        if origin in ALLOWED_ORIGINS:
+            response.headers.add('Access-Control-Allow-Origin', origin)
+
+    return response

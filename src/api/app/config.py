@@ -1,5 +1,7 @@
 import os
 
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "").split(',')
+
 
 class Config:
     DEBUG: bool = os.getenv("DEBUG") == "True"

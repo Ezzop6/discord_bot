@@ -3,6 +3,8 @@ import logging
 from discord.message import Message
 from discord.client import Client
 import discord
+import queue
+import asyncio
 
 from services.logger import logger
 from .config import BotConfig as BOT_CFG
@@ -17,7 +19,17 @@ tracemalloc.start()
 
 
 class DiscordBot:
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(DiscordBot, cls).__new__(cls)
+        return cls._instance
+
     def __init__(self) -> None:
+        if not hasattr(self, '_initialized'):
+            self._initialized = True
+        self.message_queue = queue.Queue()
         self.client = Client(intents=intents)
         self.message_handler = MessageHandler()
         self.register_events()
@@ -36,6 +48,7 @@ class DiscordBot:
     def register_events(self):
         @self.client.event
         async def on_ready():
+            asyncio.create_task(self.process_queue_items())
             # await self.send_message_to_user(BOT_CFG.BOT_ID, f'{BOT_CFG.name} is now running!')
             await self.send_message_to_user(BOT_CFG.OWNER_ID, f'{BOT_CFG.name} is now running!')
 
@@ -68,6 +81,17 @@ class DiscordBot:
                 await logger.log_message(logging.INFO, f"User {user_id} not found")
         except Exception as e:
             await logger.log_message(logging.ERROR, f"Error sending message to user {user_id}: {e}")
+
+    async def handle_external_request(self, data):
+        if data['message'] and type(data['message']) == str:
+            await self.send_message_to_user(BOT_CFG.OWNER_ID, data['message'])
+
+    async def process_queue_items(self):
+        while True:
+            request = await asyncio.to_thread(self.message_queue.get)
+            if request:
+                await logger.log_message(logging.INFO, f"Received message from queue: {request}")
+                await self.handle_external_request(request)
 
     def check_if_is_private_message(self, message) -> bool:
         user_message = str(message.content)
