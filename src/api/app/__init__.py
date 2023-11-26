@@ -1,5 +1,5 @@
 from apiflask import APIFlask
-from .app_config import Config, ApiConfig
+from .config import Config, ApiConfig
 
 
 def create_app():

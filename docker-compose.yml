@@ -1,4 +1,4 @@
-version: "2.2"
+version: "3.1"
 services:
     bot:
         build:
@@ -16,7 +16,7 @@ services:
             - "${HOST_DEV_PORT_BOT}:80"
         command: python main.py
         networks:
-            - internal
+            - discord_bot_network
     api:
         build:
             context: .
@@ -34,25 +34,8 @@ services:
         restart: always
         command: python main.py
         networks:
-            - internal
-    # assistant:
-    #     build:
-    #         context: .
-    #         dockerfile: ./docker/assistant/Dockerfile
-    #     volumes:
-    #         - ./src/assistant:/code
-    #         - ./logs:/logs
-    #     env_file:
-    #         - .env
-    #     environment:
-    #         - PUID=1000
-    #         - PGID=1000
-    #     ports:
-    #         - "${HOST_DEV_PORT_ASSISTANT}:80"
-    #     command: python main.py
-    #     devices:
-    #         - "/dev/snd:/dev/snd"
-    #     networks:
-    #         - internal
+            - discord_bot_network
 networks:
-    internal:
+    discord_bot_network:
+        external:
+            name: discord_bot_network

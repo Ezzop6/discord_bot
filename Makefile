@@ -3,6 +3,7 @@ SHELL := /bin/bash
 .PHONY: run clean venv
 
 build: .env docker-compose.yml
+	@docker network create discord_bot_network
 	@docker-compose up --build -d
 	
 rebuild: #rebuild container

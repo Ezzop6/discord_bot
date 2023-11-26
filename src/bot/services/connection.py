@@ -1,17 +1,30 @@
-from http.client import HTTPSConnection
+from http.client import HTTPSConnection, HTTPConnection
 import logging
 
 from .logger import logger
 
 
 class HTTPSConnectionClient:
-    async def __init__(self, host, **kwargs):
+    def __init__(self, host, **kwargs):
         self.connection = HTTPSConnection(host, **kwargs)
 
-    async def __enter__(self):
+    def __enter__(self):
         return self.connection
 
-    async def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type:
-            await logger.log_message(logging.ERROR, f"Error: {exc_type} {exc_val}")
+            logger.log_sync_message(logging.ERROR, f"Error: {exc_type} {exc_val}")
+        self.connection.close()
+
+
+class HTTPConnectionClient:
+    def __init__(self, host, **kwargs):
+        self.connection = HTTPConnection(host, **kwargs)
+
+    def __enter__(self):
+        return self.connection
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type:
+            logger.log_sync_message(logging.ERROR, f"Error: {exc_type} {exc_val}")
         self.connection.close()

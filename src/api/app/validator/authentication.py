@@ -1,4 +1,4 @@
-from app.app_config import Config
+from app.config import Config
 from flask import request
 from functools import wraps
 from werkzeug.exceptions import Unauthorized

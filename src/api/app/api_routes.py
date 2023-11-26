@@ -13,7 +13,7 @@ from .schemas.api_schema import (
 )
 
 
-@app.get("/api-status")
+@app.get("/status")
 @app.output(HealthStatus.Schema)  # type: ignore
 @app.doc(
     responses=[200],
@@ -21,7 +21,7 @@ from .schemas.api_schema import (
     tags=["Health"],
 )
 def app_status():
-    return HealthStatus()
+    return HealthStatus(status="Hello From API")
 
 
 @app.post("/login")

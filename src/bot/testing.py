@@ -1,14 +1,7 @@
-from services.gpt_interface import GPTInterface
-from services.schemas.gpt_schemas import GPTResponseSchema
-interface = GPTInterface()
+import requests
+from app.config import AppConfig
 
 
-def make_response(message):
-    return interface.answer(message)
-
-
-prompt = ' kolik je hodin a rekni vtip'
-
-content = make_response(prompt)
-
-print(content)
+conn = requests.get(f'{AppConfig.API_URL}/status')
+status = conn.json()
+print(status)

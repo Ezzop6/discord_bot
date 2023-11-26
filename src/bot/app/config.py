@@ -13,6 +13,9 @@ ANSWER_WORDS = [
 @dataclass
 class AppConfig:
     DEBUG = os.getenv("DEBUG", "False") == "True"
+    PORT_API: int = int(os.getenv("INTERNAL_PORT_API", "8080"))
+    API_URL: str = f'http://api:{PORT_API}/'
+    PORT_BOT: int = int(os.getenv("INTERNAL_PORT_BOT", "8081"))
 
 
 @dataclass
