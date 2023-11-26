@@ -35,5 +35,24 @@ services:
         command: python main.py
         networks:
             - internal
+    # assistant:
+    #     build:
+    #         context: .
+    #         dockerfile: ./docker/assistant/Dockerfile
+    #     volumes:
+    #         - ./src/assistant:/code
+    #         - ./logs:/logs
+    #     env_file:
+    #         - .env
+    #     environment:
+    #         - PUID=1000
+    #         - PGID=1000
+    #     ports:
+    #         - "${HOST_DEV_PORT_ASSISTANT}:80"
+    #     command: python main.py
+    #     devices:
+    #         - "/dev/snd:/dev/snd"
+    #     networks:
+    #         - internal
 networks:
     internal:

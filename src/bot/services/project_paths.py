@@ -49,20 +49,3 @@ class ProjectFolders:
 #     logs = root / 'logs'
 #     bot_log = logs / 'bot'
 #     api_log = logs / 'api'
-
-# local testing
-
-# @dataclass
-# class ProjectFolders:
-#     root = pathlib.Path(__file__).parent.parent.parent.parent
-#     src = root / 'src'
-
-#     api = src / 'api'
-#     bot = src / 'bot'
-
-#     bot_services = bot / 'services'
-#     bot_prompts = bot_services / 'gpt_prompts'
-#     # logs folders
-#     logs = root / 'logs'
-#     bot_log = logs / 'bot'
-#     api_log = logs / 'api'

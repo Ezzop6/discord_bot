@@ -27,6 +27,8 @@ install-venv:
 	@python3.11 -m venv venv
 	@source venv/bin/activate && pip install -r docker/bot/requirements.txt
 	@source venv/bin/activate && pip install -r docker/api/requirements.txt
+	@source venv/bin/activate && pip install -r docker/assistant/requirements.txt
+
 
 run-watcher:
 	@source venv/bin/activate && python3.11 src/watchdog_script.py
