@@ -1,9 +1,11 @@
+from services.logger import logger
+import logging
 from flask import request, make_response
 from app import app
 from app.validator import validate_token, private_api_route
 
 from app.bot_connection import BotConnection
-from app.config import ALLOWED_ORIGINS
+from app.config import Config
 
 from .schemas.api_schema import (
     HealthStatus,
@@ -44,7 +46,6 @@ def bot_status():
 @app.post("/send-message-to-bot")
 @private_api_route
 @app.input(Message.Schema)  # type: ignore
-@app.output(str)  # type: ignore
 @app.doc(
     responses=[200],
     summary="Send message to the bot",
@@ -80,13 +81,13 @@ def after_request_func(response):
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')
         response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
 
-        if origin in ALLOWED_ORIGINS:
+        if origin in Config.ALLOWED_ORIGINS:
             response.headers.add('Access-Control-Allow-Origin', origin)
 
     else:
         response.headers.add('Access-Control-Allow-Credentials', 'true')
 
-        if origin in ALLOWED_ORIGINS:
+        if origin in Config.ALLOWED_ORIGINS:
             response.headers.add('Access-Control-Allow-Origin', origin)
 
     return response
